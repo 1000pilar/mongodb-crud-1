@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert')
 var url = 'mongodb://localhost/library';
-
+const ObjectId = require('mongodb').ObjectId;
 
 module.exports = {
   create: (req, res)=>{
@@ -46,17 +46,16 @@ module.exports = {
   },
   update: (req, res)=>{
     var updateBooks = function(db, callback){
-      db.collection('Books').updateOne({
-        "_id": req.params.id
+      db.collection('Books').replaceOne({
+        "_id": ObjectId(req.params.id)
       }, {
-        $set: {
           "isbn": req.body.isbn,
           "title": req.body.title,
           "author": req.body.author,
           "category": req.body.category,
           "stock": req.body.stock
-        }}, function(err, result){
-            res.json(result);
+        }, function(err, result){
+            res.json({message: `update`});
             callback()
           })
     }
@@ -70,7 +69,7 @@ module.exports = {
   delete : (req, res)=>{
     var deleteBooks = function(db, callback){
       db.collection('Books').deleteOne({
-        "_id": req.params.id
+        "_id": ObjectId(req.params.id)
       }, function(err, result){
           if (err) {
             res.send(err)
