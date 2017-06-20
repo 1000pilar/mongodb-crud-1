@@ -28,11 +28,10 @@ module.exports = {
   },
   read: (req, res)=>{
     var findBooks = function(db, callback){
-      var cursor = db.collection('Books').find()
-      cursor.each(function(err, book){
+      var cursor = db.collection('Books').find().toArray(function(err, book){
         assert.equal(err, null);
         if(book != null ) {
-          res.json(book)
+          res.send(book)
         } else {
           callback()
         }
@@ -57,13 +56,9 @@ module.exports = {
           "category": req.body.category,
           "stock": req.body.stock
         }}, function(err, result){
-          if (err) {
-            res.send(err)
-          } else {
             res.json(result);
             callback()
-          }
-      })
+          })
     }
     MongoClient.connect(url, function(err, db){
       assert.equal(null, err)
